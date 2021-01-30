@@ -1,6 +1,6 @@
 # ppmcvt
 SYNOPSIS
-ppmcvt[bg:i:r:smt:n:o:] file
+ppmcvt[bg:i:r:smt:n: o:] file
 
 ppmcvt manipulates input Portable Pixel Map (PPM) files and outputs a new image based on its given options.Only one option that specifies a transformation can be used at a time. In the synopsis, options followed by a ‘:’ expect a subsequent parameter. The options are:
 
