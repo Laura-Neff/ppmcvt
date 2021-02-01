@@ -1,12 +1,30 @@
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
+#include <errno.h> //Take out later
 #include <stdlib.h>
 #include <getopt.h>
 #include "pbm.h"
 
 int main( int argc, char *argv[] )
 {
+    //command line processing
+    //getopt, strtol
+
+    //read image using ppm_readimage()
+
+    //transformation based on command line option
+    //oldimg --> new image
+        //can change img in place or:
+        //alloc new object
+        //assign pixels of new object based on input object and transformation = new image
+        //write out new image
+
+
+    //write new image using write_ppmimage()/
+
+    //Process file names in command line?
+
+
     int option;
     char * endPointer;
 
@@ -60,8 +78,17 @@ int main( int argc, char *argv[] )
 
             case 't':
             if(strtol(optarg, &endPointer,10) > 8 || strtol(optarg, &endPointer,10) < 1){
-                errno = 1;
-                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", atoi(optarg));
+                //Assign the strtol optarg value to a variable for easier use --> then can use strtol in print statement
+                errno = 1; //error value of last C value you saw --> usually read, but not write its value
+                            //don't ever write erno to a different value -- functions change erno themselves when they fail
+                            //value of erno is "ENOERROR" until you call C function
+                            //value is the most recent C function you called
+
+                //fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", atoi(optarg)); //Make into strtol
+                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", (int) strtol(optarg, NULL, 10)); 
+                //use integer type to hold a long -- for this exercise, it doesn't matter -- can also cast
+                    //don't cast if the long is too big to be represented by an int
+                    
                 printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
                 exit(1);
             }
@@ -71,7 +98,7 @@ int main( int argc, char *argv[] )
             case 'n':
             if(strtol(optarg, &endPointer,10) > 8 || strtol(optarg, &endPointer,10) < 1){
                 errno = 1;
-                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", atoi(optarg));
+                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", atoi(optarg)); //Make into strtol
                 printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
                 exit(1);
             }
