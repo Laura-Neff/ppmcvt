@@ -25,8 +25,11 @@ int main( int argc, char *argv[] )
 
 
     int option;
-    char * endPointer;
+    //char *endPointer;
     long target;
+    char *outputFile = NULL;
+    int transformed = 0;
+
 
     for (int i = 0; i < argc; i++){
         printf("Argument[%d]: %s\n", i, argv[i]);
@@ -35,11 +38,21 @@ int main( int argc, char *argv[] )
     while((option = getopt(argc, argv, "bg:i:r:smt:n:o:]")) != -1) {
         switch(option) {
             case 'b':
+            if(transformed == 1){
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            };
+            transformed = 1;
             printf("Option b, converting to PBM.\n");
             break;
 
             case 'g':
             target = strtol(optarg, NULL, 10);
+            if(transformed == 1){
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            };
+            transformed = 1;
             if(target > 65536){
                 fprintf(stderr, "Error: Invalid max grayscale pixel value: %s; must be less than 65,536\n", optarg);
                 exit(1);
@@ -48,6 +61,7 @@ int main( int argc, char *argv[] )
             break;
 
             case 'i':
+            //Is this a transformation? Email him
             if(strcmp(optarg, "red") != 0 || strcmp(optarg, "green") != 0 || strcmp(optarg, "blue") != 0 ) {
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
                 exit(1);
@@ -56,6 +70,7 @@ int main( int argc, char *argv[] )
             break;
 
             case 'r':
+            //Is this a transformation?
             if(strcmp(optarg, "red") != 0 || strcmp(optarg, "green") != 0 || strcmp(optarg, "blue") != 0 ) {
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
                 exit(1);
@@ -64,14 +79,29 @@ int main( int argc, char *argv[] )
             break;
 
             case 's':
+            if(transformed == 1){
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            };
+            transformed = 1;
             printf("Option s, applying sepia transformation.\n");
             break;
 
             case 'm':
+            if(transformed == 1){
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            };
+            transformed = 1;
             printf("Option m, vertically mirroring the first half of the image to the second half.\n");
             break;
 
             case 't':
+            if(transformed == 1){
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            };
+                transformed = 1;
                 target = strtol(optarg, NULL, 10);
             
             if(target > 8 || target < 1){
@@ -98,6 +128,11 @@ int main( int argc, char *argv[] )
             break;
 
             case 'n':
+            if(transformed == 1){
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            };
+            transformed = 1;
             target = strtol(optarg, NULL, 10);
             if(target > 8 || target < 1){
                 fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", (int) target); 
@@ -107,7 +142,8 @@ int main( int argc, char *argv[] )
             break;
 
             case 'o':
-            printf("Option o, writing output image to specified file. Existent output files will be overwritten.");
+            outputFile = optarg;
+            printf("Option o, writing output image to specified file. The output file is %s\n", outputFile);
             break;
 
             //Add situation for multiple transformations somewhere
@@ -119,6 +155,19 @@ int main( int argc, char *argv[] )
                 //printf("Unexpected option\n"); Take out comments later
             break;
         }
+    }
+
+     if(argc != optind){
+        char *inputImage = argv[optind];
+
+    } else {
+        fprintf(stderr, "Error: No input file specified\n");
+        exit(1);
+    }
+
+    if(outputFile == NULL){
+        fprintf(stderr, "Error: No output file specified\n");
+        exit(1);
     }
 
 
