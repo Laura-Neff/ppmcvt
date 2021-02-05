@@ -1,9 +1,8 @@
-#include <stdio.h>
-#include <string.h>
-#include <errno.h> //Take out later
-#include <stdlib.h>
-#include <getopt.h>
-#include "pbm.h"
+#include <stdio.h> //error library
+#include <string.h> //for string compare
+#include <stdlib.h> //for free, malloc, and NULL
+#include <getopt.h> //for getopt
+#include "pbm.h"    //pbm library
 
 int main( int argc, char *argv[] )
 {
@@ -27,6 +26,7 @@ int main( int argc, char *argv[] )
 
     int option;
     char * endPointer;
+    long target;
 
     for (int i = 0; i < argc; i++){
         printf("Argument[%d]: %s\n", i, argv[i]);
@@ -39,10 +39,9 @@ int main( int argc, char *argv[] )
             break;
 
             case 'g':
-            if(strtol(optarg, &endPointer,10) > 65536){
-                errno = 1;
+            target = strtol(optarg, NULL, 10);
+            if(target > 65536){
                 fprintf(stderr, "Error: Invalid max grayscale pixel value: %s; must be less than 65,536\n", optarg);
-                printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
                 exit(1);
             }
             printf("Option g, converting to a PGM. Arg = %s\n", optarg);
@@ -50,9 +49,7 @@ int main( int argc, char *argv[] )
 
             case 'i':
             if(strcmp(optarg, "red") != 0 || strcmp(optarg, "green") != 0 || strcmp(optarg, "blue") != 0 ) {
-                errno = 1;
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
-                printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
                 exit(1);
             }
             printf("Option i, isolating the RGB channel. Arg = %s\n", optarg);
@@ -60,9 +57,7 @@ int main( int argc, char *argv[] )
 
             case 'r':
             if(strcmp(optarg, "red") != 0 || strcmp(optarg, "green") != 0 || strcmp(optarg, "blue") != 0 ) {
-                errno = 1;
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
-                printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
                 exit(1);
             }
             printf("Option r, removing the specified RGB channel. Arg = %s\n", optarg);
@@ -77,29 +72,35 @@ int main( int argc, char *argv[] )
             break;
 
             case 't':
-            if(strtol(optarg, &endPointer,10) > 8 || strtol(optarg, &endPointer,10) < 1){
+                target = strtol(optarg, NULL, 10);
+            
+            if(target > 8 || target < 1){
+
+                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", (int) target); 
+
+                //use integer type to hold a long -- for this exercise, it doesn't matter -- can also cast
+                    //don't cast if the long is too big to be represented by an int
+
+
                 //Assign the strtol optarg value to a variable for easier use --> then can use strtol in print statement
-                errno = 1; //error value of last C value you saw --> usually read, but not write its value
+                //errno = 1; //error value of last C value you saw --> usually read, but not write its value
                             //don't ever write erno to a different value -- functions change erno themselves when they fail
                             //value of erno is "ENOERROR" until you call C function
                             //value is the most recent C function you called
 
-                //fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", atoi(optarg)); //Make into strtol
-                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", (int) strtol(optarg, NULL, 10)); 
-                //use integer type to hold a long -- for this exercise, it doesn't matter -- can also cast
-                    //don't cast if the long is too big to be represented by an int
+                
                     
-                printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
+                //printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
+                
                 exit(1);
             }
             printf("Option t, reducing input image to thumbnail based on scaling factor [1-8]. Arg = %s\n", optarg);
             break;
 
             case 'n':
-            if(strtol(optarg, &endPointer,10) > 8 || strtol(optarg, &endPointer,10) < 1){
-                errno = 1;
-                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", atoi(optarg)); //Make into strtol
-                printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
+            target = strtol(optarg, NULL, 10);
+            if(target > 8 || target < 1){
+                fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", (int) target); 
                 exit(1);
             }
             printf("Option n, tiling thumbnails of input image based on scaling factor [1-8] Arg = %s\n", optarg);
@@ -113,16 +114,14 @@ int main( int argc, char *argv[] )
 
             default:
                 //For now
-                errno = 1;
                 fprintf(stderr, "Usage: ppmcvt [-bgirsmtno] [FILE]\n");
-                printf(" Value of errno: %d\n ", errno); //Take this out at end. Comments = bad.
                 exit(1);
-            //printf("Unexpected option\n"); Take out comments later
+                //printf("Unexpected option\n"); Take out comments later
             break;
         }
     }
 
 
-
-    return 0;
+    exit(0);
+    //return 0;
 }
