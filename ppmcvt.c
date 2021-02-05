@@ -4,6 +4,21 @@
 #include <getopt.h> //for getopt
 #include "pbm.h"    //pbm library
 
+typedef struct Options {
+    char transformation;
+    char transformationValue[6]; //Leave room for null character at the end of the array. Strings --> have null character at end
+    char inputFile[200];
+    char outputFile[200];
+} options;
+
+//Address in memory for structs are not modifiable
+
+//Typdef = means you can make a name of a new variable of this type without saying "struct <class>" every time
+//Only meant for your convenience, clarity, and such
+
+
+
+
 int main( int argc, char *argv[] )
 {
     //command line processing
@@ -30,6 +45,7 @@ int main( int argc, char *argv[] )
     char *outputFile = NULL;
     int transformed = 0;
 
+    options capture;
 
     for (int i = 0; i < argc; i++){
         printf("Argument[%d]: %s\n", i, argv[i]);
@@ -38,6 +54,10 @@ int main( int argc, char *argv[] )
     while((option = getopt(argc, argv, "bg:i:r:smt:n:o:]")) != -1) {
         switch(option) {
             case 'b':
+            //capture = (options){.transformation = 'b', .transformationValue = optarg, .inputFile = "foo.pbm", .outputFile = "foo.ppm"};
+            capture.transformation = 'b';
+            printf("%c\n", capture.transformation);
+
             if(transformed == 1){
                 fprintf(stderr, "Error: Multiple transformations specified\n");
                 exit(1);
