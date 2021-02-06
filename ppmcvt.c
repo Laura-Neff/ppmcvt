@@ -48,6 +48,7 @@ int main( int argc, char *argv[] )
     options capture;
     capture.transformation = 0;
     capture.transformationValue = NULL;
+    capture.outputFile = NULL;
 
     for (int i = 0; i < argc; i++){
         printf("Argument[%d]: %s\n", i, argv[i]);
@@ -66,7 +67,7 @@ int main( int argc, char *argv[] )
 
             capture.transformation = 'b';
             //capture.transformationValue = optarg;
-            printf("%s\n", capture.transformationValue);
+            //printf("%s\n", capture.transformationValue);
             printf("%c\n", capture.transformation);
 
             printf("Option b, converting to PBM.\n");
@@ -216,7 +217,8 @@ int main( int argc, char *argv[] )
             break;
 
             case 'o':
-            outputFile = optarg;
+            capture.outputFile = optarg;
+            //outputFile = optarg;
             printf("Option o, writing output image to specified file. The output file is %s\n", outputFile);
             break;
 
@@ -232,14 +234,15 @@ int main( int argc, char *argv[] )
     }
 
      if(argc != optind){
-        char *inputImage = argv[optind];
+        capture.inputFile = argv[optind];
+        //char *inputImage = argv[optind];
 
     } else {
         fprintf(stderr, "Error: No input file specified\n");
         exit(1);
     }
 
-    if(outputFile == NULL){
+    if(capture.outputFile == NULL){
         fprintf(stderr, "Error: No output file specified\n");
         exit(1);
     }
