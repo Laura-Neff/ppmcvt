@@ -6,9 +6,9 @@
 
 typedef struct Options {
     char transformation;
-    char transformationValue[6]; //Leave room for null character at the end of the array. Strings --> have null character at end
-    char inputFile[200];
-    char outputFile[200];
+    char *transformationValue;
+    char *inputFile;
+    char *outputFile;
 } options;
 
 //Address in memory for structs are not modifiable
@@ -46,6 +46,8 @@ int main( int argc, char *argv[] )
     int transformed = 0;
 
     options capture;
+    capture.transformation = 0;
+    capture.transformationValue = NULL;
 
     for (int i = 0; i < argc; i++){
         printf("Argument[%d]: %s\n", i, argv[i]);
@@ -55,24 +57,35 @@ int main( int argc, char *argv[] )
         switch(option) {
             case 'b':
             //capture = (options){.transformation = 'b', .transformationValue = optarg, .inputFile = "foo.pbm", .outputFile = "foo.ppm"};
-            capture.transformation = 'b';
-            printf("%c\n", capture.transformation);
 
-            if(transformed == 1){
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
                 fprintf(stderr, "Error: Multiple transformations specified\n");
                 exit(1);
-            };
-            transformed = 1;
+            }
+
+            capture.transformation = 'b';
+            //capture.transformationValue = optarg;
+            printf("%s\n", capture.transformationValue);
+            printf("%c\n", capture.transformation);
+
             printf("Option b, converting to PBM.\n");
             break;
 
             case 'g':
             target = strtol(optarg, NULL, 10);
-            if(transformed == 1){
+
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
                 fprintf(stderr, "Error: Multiple transformations specified\n");
                 exit(1);
-            };
-            transformed = 1;
+            }
+
+            capture.transformation = 'g';
+            capture.transformationValue = optarg;
+            printf("%s\n", capture.transformationValue);
+            printf("%c\n", capture.transformation);
+
             if(target > 65536){
                 fprintf(stderr, "Error: Invalid max grayscale pixel value: %s; must be less than 65,536\n", optarg);
                 exit(1);
@@ -81,8 +94,19 @@ int main( int argc, char *argv[] )
             break;
 
             case 'i':
-            //Is this a transformation? Email him
-            if(strcmp(optarg, "red") != 0 || strcmp(optarg, "green") != 0 || strcmp(optarg, "blue") != 0 ) {
+            //This is a transformation
+            
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            }
+
+            capture.transformation = 'i';
+            printf("%c\n", capture.transformation);
+            //printf("optarg: %s\n",optarg);
+            //printf("strcmp optarg: %d\n",strcmp(optarg,"red"));
+            if(strcmp(optarg, "red") != 0 && strcmp(optarg, "green") != 0 && strcmp(optarg, "blue") != 0 ) {
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
                 exit(1);
             }
@@ -90,8 +114,18 @@ int main( int argc, char *argv[] )
             break;
 
             case 'r':
-            //Is this a transformation?
-            if(strcmp(optarg, "red") != 0 || strcmp(optarg, "green") != 0 || strcmp(optarg, "blue") != 0 ) {
+            //This is a tranformation
+            
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
+                fprintf(stderr, "Error: Multiple transformations specified\n");
+                exit(1);
+            }
+
+            capture.transformation = 'r';
+            printf("%c\n", capture.transformation);
+
+            if(strcmp(optarg, "red") != 0 && strcmp(optarg, "green") != 0 && strcmp(optarg, "blue") != 0 ) {
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
                 exit(1);
             }
@@ -99,30 +133,44 @@ int main( int argc, char *argv[] )
             break;
 
             case 's':
-            if(transformed == 1){
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
                 fprintf(stderr, "Error: Multiple transformations specified\n");
                 exit(1);
-            };
-            transformed = 1;
+            }
+
+            capture.transformation = 's';
+            printf("%c\n", capture.transformation);
+
             printf("Option s, applying sepia transformation.\n");
             break;
 
             case 'm':
-            if(transformed == 1){
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
                 fprintf(stderr, "Error: Multiple transformations specified\n");
                 exit(1);
-            };
-            transformed = 1;
+            }
+
+            capture.transformation = 'm';
+            printf("%c\n", capture.transformation);
+
             printf("Option m, vertically mirroring the first half of the image to the second half.\n");
             break;
 
             case 't':
-            if(transformed == 1){
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
                 fprintf(stderr, "Error: Multiple transformations specified\n");
                 exit(1);
-            };
-                transformed = 1;
-                target = strtol(optarg, NULL, 10);
+            }
+
+            capture.transformation = 't';
+            capture.transformationValue = optarg;
+            printf("%s\n", capture.transformationValue);
+            printf("%c\n", capture.transformation);
+
+            target = strtol(optarg, NULL, 10);
             
             if(target > 8 || target < 1){
 
@@ -148,11 +196,17 @@ int main( int argc, char *argv[] )
             break;
 
             case 'n':
-            if(transformed == 1){
+            if(capture.transformation) //meaning if capture.transformation != 0
+            {
                 fprintf(stderr, "Error: Multiple transformations specified\n");
                 exit(1);
-            };
-            transformed = 1;
+            }
+
+            capture.transformation = 'n';
+            capture.transformationValue = optarg;
+            printf("%s\n", capture.transformationValue);
+            printf("%c\n", capture.transformation);
+
             target = strtol(optarg, NULL, 10);
             if(target > 8 || target < 1){
                 fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", (int) target); 
