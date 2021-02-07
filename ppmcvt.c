@@ -111,6 +111,7 @@ int main( int argc, char *argv[] )
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
                 exit(1);
             }
+            capture.transformationValue = optarg;
             printf("Option i, isolating the RGB channel. Arg = %s\n", optarg);
             break;
 
@@ -255,7 +256,9 @@ int main( int argc, char *argv[] )
                 inputPPM->pixmap[2][1][1]);
 
     PBMImage * outputPBM;
-    int tmp;
+    PGMImage * outputPGM;
+    PPMImage * outputPPM;
+    double tmp;
 
     switch(capture.transformation) {
         case 'b':
@@ -268,8 +271,8 @@ int main( int argc, char *argv[] )
         //ppm->pixmap[2][h][w] blue
 
             for(int j = 0; j < outputPBM->width; j++) {
-                tmp = (inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3 > (inputPPM->max)/2;
-                if(tmp) {
+                tmp = (inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3.;
+                if(tmp > (inputPPM->max)/2) {
                     outputPBM->pixmap[i][j] = 0;
                 } else {
                     outputPBM->pixmap[i][j] = 1;
@@ -281,23 +284,62 @@ int main( int argc, char *argv[] )
 
 
         }
-
     write_pbmfile(outputPBM, capture.outputFile);
     exit(0);
     break;
+    
 
-
-
-
-
+    case 'g':
+    outputPGM = new_pgmimage(inputPPM->width, inputPPM->height, strtol(capture.transformationValue, NULL, 10));
+     for(int i = 0; i < outputPGM->height; i++){
+        //ppm->pixmap[0][h][w] red
+        //ppm->pixmap[1][h][w] green
+        //ppm->pixmap[2][h][w] blue
+            for(int j = 0; j < outputPGM->width; j++) {
+                tmp = ((inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3);
+                tmp = (tmp/inputPPM->max) * outputPGM->max;
+                outputPGM->pixmap[i][j] = (int) tmp;
+            }
     }
 
-
-
-
-    //𝐴𝑣𝑒𝑟𝑎𝑔𝑒(𝑅 + 𝐺 + 𝐵) < 𝑃𝑃𝑀𝑀𝑎𝑥/2
-
-
+    write_pgmfile(outputPGM, capture.outputFile);
     exit(0);
-    //return 0;
+    break;
+
+    case 'i':
+    outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
+    if(strcmp(capture.transformationValue, "red") == 0){
+        tmp = 0;
+    }
+    else if(strcmp(capture.transformationValue, "green") == 0){
+        tmp = 1;
+    }
+    else {
+        tmp = 2;
+    }
+     for(int i = 0; i < outputPPM->height; i++){
+        //ppm->pixmap[0][h][w] red
+        //ppm->pixmap[1][h][w] green
+        //ppm->pixmap[2][h][w] blue
+            for(int j = 0; j < outputPPM->width; j++) {
+              for(int k = 0; k < 3; k++){
+                  if(k != tmp) {
+                      outputPPM->pixmap[k][i][j] = 0;
+                 }
+                 else {
+                     outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
+                 }
+            }
+        }
+    }
+
+    write_ppmfile(outputPPM, capture.outputFile);
+    exit(0);
+    break;
+
 }
+
+}
+    
+
+
