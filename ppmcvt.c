@@ -386,7 +386,33 @@ int main( int argc, char *argv[] )
     exit(0);
     break;
 
-    
+    case 'm':
+    outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
+    tmp = (outputPPM->width)/2;
+     for(int i = 0; i < outputPPM->height; i++){
+        //ppm->pixmap[0][h][w] red
+        //ppm->pixmap[1][h][w] green
+        //ppm->pixmap[2][h][w] blue
+            for(int j = 0; j < outputPPM->width; j++) {
+                for(int k = 0; k < 3; k++) {
+                    if(j>tmp){
+                        outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][(int) (2*tmp) - j];
+                    }
+                    else {
+                        outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
+                    }
+                }
+             
+             
+            
+        }
+    }
+
+    write_ppmfile(outputPPM, capture.outputFile);
+    exit(0);
+    break;
+
+
 
 }
 
