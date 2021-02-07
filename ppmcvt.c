@@ -249,6 +249,10 @@ int main( int argc, char *argv[] )
         exit(1);
     }
 
+    if (capture.transformation == 0){
+        capture.transformation = 'b';
+    }
+
     PPMImage *inputPPM = read_ppmfile(capture.inputFile); //Keep this
     printf("The file was read in successfully.\n");
     printf("Pixel at (2,2): %d, %d, %d (RGB).\n",
@@ -263,154 +267,153 @@ int main( int argc, char *argv[] )
 
     switch(capture.transformation) {
         case 'b':
-        //use inputPPM and transform
+            //use inputPPM and transform
+            outputPBM = new_pbmimage(inputPPM->width, inputPPM->height); //just allocated enough space
+            for(int i = 0; i < outputPBM->height; i++){
+            //ppm->pixmap[0][h][w] red
+            //ppm->pixmap[1][h][w] green
+            //ppm->pixmap[2][h][w] blue
 
-        outputPBM = new_pbmimage(inputPPM->width, inputPPM->height); //just allocated enough space
-       for(int i = 0; i < outputPBM->height; i++){
-        //ppm->pixmap[0][h][w] red
-        //ppm->pixmap[1][h][w] green
-        //ppm->pixmap[2][h][w] blue
-
-            for(int j = 0; j < outputPBM->width; j++) {
-                tmp = (inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3.;
-                if(tmp > (inputPPM->max)/2) {
-                    outputPBM->pixmap[i][j] = 0;
-                } else {
-                    outputPBM->pixmap[i][j] = 1;
+                for(int j = 0; j < outputPBM->width; j++) {
+                    tmp = (inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3.;
+                    if(tmp > (inputPPM->max)/2) {
+                        outputPBM->pixmap[i][j] = 0;
+                    } else {
+                        outputPBM->pixmap[i][j] = 1;
+                    }
                 }
+
+                //If this is < 2, output 0
+                //If this is > 2, output 1
+
+
             }
-
-            //If this is < 2, output 0
-            //If this is > 2, output 1
-
-
-        }
-    write_pbmfile(outputPBM, capture.outputFile);
-    exit(0);
-    break;
+            write_pbmfile(outputPBM, capture.outputFile);
+            del_pbmimage(outputPBM);
+            break;
     
 
     case 'g':
-    outputPGM = new_pgmimage(inputPPM->width, inputPPM->height, strtol(capture.transformationValue, NULL, 10));
-     for(int i = 0; i < outputPGM->height; i++){
-        //ppm->pixmap[0][h][w] red
-        //ppm->pixmap[1][h][w] green
-        //ppm->pixmap[2][h][w] blue
-            for(int j = 0; j < outputPGM->width; j++) {
-                tmp = ((inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3);
-                tmp = (tmp/inputPPM->max) * outputPGM->max;
-                outputPGM->pixmap[i][j] = (int) tmp;
-            }
-    }
+        outputPGM = new_pgmimage(inputPPM->width, inputPPM->height, strtol(capture.transformationValue, NULL, 10));
+        for(int i = 0; i < outputPGM->height; i++){
+            //ppm->pixmap[0][h][w] red
+            //ppm->pixmap[1][h][w] green
+            //ppm->pixmap[2][h][w] blue
+                for(int j = 0; j < outputPGM->width; j++) {
+                    tmp = ((inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3);
+                    tmp = (tmp/inputPPM->max) * outputPGM->max;
+                    outputPGM->pixmap[i][j] = (int) tmp;
+                }
+        }
 
-    write_pgmfile(outputPGM, capture.outputFile);
-    exit(0);
-    break;
+        write_pgmfile(outputPGM, capture.outputFile);
+        del_pgmimage(outputPGM);
+        break;
 
     case 'i':
-    outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
-    if(strcmp(capture.transformationValue, "red") == 0){
-        tmp = 0;
-    }
-    else if(strcmp(capture.transformationValue, "green") == 0){
-        tmp = 1;
-    }
-    else {
-        tmp = 2;
-    }
-     for(int i = 0; i < outputPPM->height; i++){
-        //ppm->pixmap[0][h][w] red
-        //ppm->pixmap[1][h][w] green
-        //ppm->pixmap[2][h][w] blue
-            for(int j = 0; j < outputPPM->width; j++) {
-              for(int k = 0; k < 3; k++){
-                  if(k != tmp) {
-                      outputPPM->pixmap[k][i][j] = 0;
-                 }
-                 else {
-                     outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
-                 }
-            }
+        outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
+        if(strcmp(capture.transformationValue, "red") == 0){
+            tmp = 0;
         }
-    }
-
-    write_ppmfile(outputPPM, capture.outputFile);
-    exit(0);
-    break;
-
-    case 'r':
-    outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
-    if(strcmp(capture.transformationValue, "red") == 0){
-        tmp = 0;
-    }
-    else if(strcmp(capture.transformationValue, "green") == 0){
-        tmp = 1;
-    }
-    else {
-        tmp = 2;
-    }
-     for(int i = 0; i < outputPPM->height; i++){
-        //ppm->pixmap[0][h][w] red
-        //ppm->pixmap[1][h][w] green
-        //ppm->pixmap[2][h][w] blue
-            for(int j = 0; j < outputPPM->width; j++) {
-              for(int k = 0; k < 3; k++){
-                  if(k != tmp) {
-                      outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
-                 }
-                 else {
-                     outputPPM->pixmap[k][i][j] = 0;
-                 }
-            }
+        else if(strcmp(capture.transformationValue, "green") == 0){
+            tmp = 1;
         }
-    }
-    write_ppmfile(outputPPM, capture.outputFile);
-    exit(0);
-    break;
-    case 's':
-    outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
-     for(int i = 0; i < outputPPM->height; i++){
-        //ppm->pixmap[0][h][w] red
-        //ppm->pixmap[1][h][w] green
-        //ppm->pixmap[2][h][w] blue
-            for(int j = 0; j < outputPPM->width; j++) {
-             outputPPM->pixmap[0][i][j] = (.393)*inputPPM->pixmap[0][i][j] + (.769)*inputPPM->pixmap[1][i][j] + (.189)*inputPPM->pixmap[2][i][j];
-             outputPPM->pixmap[1][i][j] = (.349)*inputPPM->pixmap[0][i][j] + (.686)*inputPPM->pixmap[1][i][j] + (.168)*inputPPM->pixmap[2][i][j];
-             outputPPM->pixmap[2][i][j] = (.272)*inputPPM->pixmap[0][i][j] + (.534)*inputPPM->pixmap[1][i][j] + (.131)*inputPPM->pixmap[2][i][j];
-             
-            
+        else {
+            tmp = 2;
         }
-    }
-
-    write_ppmfile(outputPPM, capture.outputFile);
-    exit(0);
-    break;
-
-    case 'm':
-    outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
-    tmp = (outputPPM->width)/2;
-     for(int i = 0; i < outputPPM->height; i++){
-        //ppm->pixmap[0][h][w] red
-        //ppm->pixmap[1][h][w] green
-        //ppm->pixmap[2][h][w] blue
-            for(int j = 0; j < outputPPM->width; j++) {
-                for(int k = 0; k < 3; k++) {
-                    if(j>tmp){
-                        outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][(int) (2*tmp) - j];
+        for(int i = 0; i < outputPPM->height; i++){
+            //ppm->pixmap[0][h][w] red
+            //ppm->pixmap[1][h][w] green
+            //ppm->pixmap[2][h][w] blue
+                for(int j = 0; j < outputPPM->width; j++) {
+                for(int k = 0; k < 3; k++){
+                    if(k != tmp) {
+                        outputPPM->pixmap[k][i][j] = 0;
                     }
                     else {
                         outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
                     }
                 }
-             
-             
-            
+            }
         }
-    }
 
-    write_ppmfile(outputPPM, capture.outputFile);
-    exit(0);
-    break;
+        write_ppmfile(outputPPM, capture.outputFile);
+        del_ppmimage(outputPPM);
+        break;
+
+    case 'r':
+        outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
+        if(strcmp(capture.transformationValue, "red") == 0){
+            tmp = 0;
+        }
+        else if(strcmp(capture.transformationValue, "green") == 0){
+            tmp = 1;
+        }
+        else {
+            tmp = 2;
+        }
+        for(int i = 0; i < outputPPM->height; i++){
+            //ppm->pixmap[0][h][w] red
+            //ppm->pixmap[1][h][w] green
+            //ppm->pixmap[2][h][w] blue
+                for(int j = 0; j < outputPPM->width; j++) {
+                for(int k = 0; k < 3; k++){
+                    if(k != tmp) {
+                        outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
+                    }
+                    else {
+                        outputPPM->pixmap[k][i][j] = 0;
+                    }
+                }
+            }
+        }
+        write_ppmfile(outputPPM, capture.outputFile);
+        del_ppmimage(outputPPM);
+        break;
+
+    case 's':
+        outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
+        for(int i = 0; i < outputPPM->height; i++){
+            //ppm->pixmap[0][h][w] red
+            //ppm->pixmap[1][h][w] green
+            //ppm->pixmap[2][h][w] blue
+                for(int j = 0; j < outputPPM->width; j++) {
+                outputPPM->pixmap[0][i][j] = (.393)*inputPPM->pixmap[0][i][j] + (.769)*inputPPM->pixmap[1][i][j] + (.189)*inputPPM->pixmap[2][i][j];
+                outputPPM->pixmap[1][i][j] = (.349)*inputPPM->pixmap[0][i][j] + (.686)*inputPPM->pixmap[1][i][j] + (.168)*inputPPM->pixmap[2][i][j];
+                outputPPM->pixmap[2][i][j] = (.272)*inputPPM->pixmap[0][i][j] + (.534)*inputPPM->pixmap[1][i][j] + (.131)*inputPPM->pixmap[2][i][j];
+                
+                
+            }
+        }
+
+        write_ppmfile(outputPPM, capture.outputFile);
+        del_ppmimage(outputPPM);
+        break;
+
+    case 'm':
+        outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
+        tmp = (outputPPM->width)/2;
+        for(int i = 0; i < outputPPM->height; i++){
+            //ppm->pixmap[0][h][w] red
+            //ppm->pixmap[1][h][w] green
+            //ppm->pixmap[2][h][w] blue
+                for(int j = 0; j < outputPPM->width; j++) {
+                    for(int k = 0; k < 3; k++) {
+                        if(j>tmp){
+                            outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][(int) (2*tmp) - j];
+                        }
+                        else {
+                            outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
+                        }
+                    }
+                
+                
+                
+            }
+        }
+        write_ppmfile(outputPPM, capture.outputFile);
+        del_ppmimage(outputPPM);
+        break;
 
     case 't':
         tmp = strtol(capture.transformationValue, NULL, 10);
@@ -428,9 +431,10 @@ int main( int argc, char *argv[] )
                 
             }
         }
-    write_ppmfile(outputPPM, capture.outputFile);
-    exit(0);
-    break;
+        write_ppmfile(outputPPM, capture.outputFile);
+        del_ppmimage(outputPPM);
+        break;
+
     case 'n':
         tmp = strtol(capture.transformationValue, NULL, 10);
         outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
@@ -449,11 +453,14 @@ int main( int argc, char *argv[] )
             }
         }
         write_ppmfile(outputPPM, capture.outputFile);
-        exit(0);
+        del_ppmimage(outputPPM);
         break;
 
 
     }
+    
+    del_ppmimage(inputPPM);
+    exit(0);
 
 }
     

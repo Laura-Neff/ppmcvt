@@ -132,12 +132,11 @@ PGMImage * new_pgmimage( unsigned int w, unsigned int h, unsigned int m )
 void del_ppmimage( PPMImage * p )
 {
     //free the multi-dimensional arrays
-
     for(int i = 0; i <= 2; i++){
-        free(p->pixmap[i]);
         for(int j = 0; j < p->height; j++){
             free(p->pixmap[i][j]);
         }
+        free(p->pixmap[i]);
     }
     free(p);
 
