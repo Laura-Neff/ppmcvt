@@ -219,7 +219,7 @@ int main( int argc, char *argv[] )
             case 'o':
             capture.outputFile = optarg;
             //outputFile = optarg;
-            printf("Option o, writing output image to specified file. The output file is %s\n", outputFile);
+            printf("Option o, writing output image to specified file. The output file is %s\n", capture.outputFile);
             break;
 
             //Add situation for multiple transformations somewhere
@@ -246,6 +246,49 @@ int main( int argc, char *argv[] )
         fprintf(stderr, "Error: No output file specified\n");
         exit(1);
     }
+
+    PPMImage *inputPPM = read_ppmfile(capture.inputFile); //Keep this
+    printf("The file was read in successfully.\n");
+    printf("Pixel at (2,2): %d, %d, %d (RGB).\n",
+                inputPPM->pixmap[0][1][1],
+                inputPPM->pixmap[1][1][1],
+                inputPPM->pixmap[2][1][1]);
+
+    PBMImage * outputPBM;
+    int tmp;
+
+    switch(capture.transformation) {
+        case 'b':
+        //use inputPPM and transform
+
+        outputPBM = new_pbmimage(inputPPM->width, inputPPM->height); //just allocated enough space
+       for(int i = 0; i < outputPBM->height; i++){
+        //ppm->pixmap[0][h][w] red
+        //ppm->pixmap[1][h][w] green
+        //ppm->pixmap[2][h][w] blue
+
+            for(int j = 0; j < outputPBM->width; j++) {
+                tmp = (inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3 < 2;
+                outputPBM->pixmap[i][j] = tmp;
+            }
+
+
+        }
+
+    write_pbmfile(outputPBM, capture.outputFile);
+    exit(0);
+    break;
+
+
+
+
+
+    }
+
+
+
+
+    //𝐴𝑣𝑒𝑟𝑎𝑔𝑒(𝑅 + 𝐺 + 𝐵) < 𝑃𝑃𝑀𝑀𝑎𝑥/2
 
 
     exit(0);

@@ -139,11 +139,9 @@ void del_ppmimage( PPMImage * p )
             free(p->pixmap[i][j]);
         }
     }
-
-    free(p->max);
-    free(p->width);
-    free(p->height);
     free(p);
+
+    //May need to deallocate the max, height, and width
 
 
 }
@@ -156,10 +154,9 @@ void del_pgmimage(PGMImage * p )
        free(p->pixmap[i]);
     }
     free(p->pixmap);
-    free(p->max);
-    free(p->width);
-    free(p->height);
     free(p);
+
+    //May need to deallocate the max, height, and width
 
 
 
@@ -171,8 +168,8 @@ void del_pbmimage( PBMImage * p )
        free(p->pixmap[i]);
     }
     free(p->pixmap);
-    free(p->width);
-    free(p->height);
     free(p);
+
+    //may need to deallocate height and width
 }
 
