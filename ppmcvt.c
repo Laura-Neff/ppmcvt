@@ -412,9 +412,29 @@ int main( int argc, char *argv[] )
     exit(0);
     break;
 
+    case 't':
+        tmp = strtol(capture.transformationValue, NULL, 10);
+        outputPPM = new_ppmimage((1/tmp)*inputPPM->width, (1/tmp)*inputPPM->height, inputPPM->max);
+        for(int i = 0; i < outputPPM->height; i++){
+            //ppm->pixmap[0][h][w] red
+            //ppm->pixmap[1][h][w] green
+            //ppm->pixmap[2][h][w] blue
+                for(int j = 0; j < outputPPM->width; j++) {
+                    for(int k = 0; k < 3; k++) {
+                        outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][(int) tmp*i][(int) tmp*j];
+                    }
+                
+                
+                
+            }
+        }
+    write_ppmfile(outputPPM, capture.outputFile);
+    exit(0);
+    break;
 
 
-}
+
+    }
 
 }
     
