@@ -268,9 +268,16 @@ int main( int argc, char *argv[] )
         //ppm->pixmap[2][h][w] blue
 
             for(int j = 0; j < outputPBM->width; j++) {
-                tmp = (inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3 < 2;
-                outputPBM->pixmap[i][j] = tmp;
+                tmp = (inputPPM->pixmap[0][i][j] + inputPPM->pixmap[1][i][j] + inputPPM->pixmap[2][i][j])/3 > (inputPPM->max)/2;
+                if(tmp) {
+                    outputPBM->pixmap[i][j] = 0;
+                } else {
+                    outputPBM->pixmap[i][j] = 1;
+                }
             }
+
+            //If this is < 2, output 0
+            //If this is > 2, output 1
 
 
         }
