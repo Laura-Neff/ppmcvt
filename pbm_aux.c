@@ -21,9 +21,30 @@ PPMImage * new_ppmimage( unsigned int w, unsigned int h, unsigned int m )
     //int *my2DArray = malloc(w * h * sizeof(unsigned int));
                      //allocate w * h * 4 bytes (because of int) of memory
 
-    myNewImage->pixmap[0] = malloc(w * h * sizeof(unsigned int));  
-    myNewImage->pixmap[1] = malloc(w * h * sizeof(unsigned int)); 
-    myNewImage->pixmap[2] = malloc(w * h * sizeof(unsigned int)); //pixmap allocated. Step 4 complete
+    //myNewImage->pixmap[0] = malloc(w * h * sizeof(unsigned int));  
+    //myNewImage->pixmap[1] = malloc(w * h * sizeof(unsigned int)); 
+    //myNewImage->pixmap[2] = malloc(w * h * sizeof(unsigned int)); //pixmap allocated. Step 4 complete
+
+
+    
+
+    //myNewImage->pixmap[0] = malloc(h * sizeof(int *)); //allocate for pixmap rows first
+
+    for(int i = 0; i <= 2; i++){
+        myNewImage->pixmap[i] = malloc(h * sizeof(int *));
+        for (int j = 0; j < h; j++) {
+            myNewImage->pixmap[i][j] = malloc(w * sizeof(unsigned int));
+        }
+    }
+
+/*
+    for(int i = 0; i < h; i++){
+        myNewImage->pixmap[i] = malloc(w * sizeof(unsigned int));  //pixmap columns allocated for each row. Step 4 complete
+
+    }
+
+*/
+
 
     return(myNewImage); //Pointer returned. Step 5 complete
 
@@ -79,7 +100,11 @@ PBMImage * new_pbmimage( unsigned int w, unsigned int h )
     //int *my2DArray = malloc(w * h * sizeof(unsigned int));
                      //allocate w * h * 4 bytes (because of int) of memory
 
-    myNewImage->pixmap = malloc(w * h * sizeof(unsigned int));  //pixmap allocated. Step 4 complete
+    myNewImage->pixmap = malloc(h * sizeof(int *)); //allocate for pixmap rows first
+    for(int i = 0; i < h; i++){
+        myNewImage->pixmap[i] = malloc(w * sizeof(unsigned int));  //pixmap columns allocated for each row. Step 4 complete
+
+    }
 
     return(myNewImage); //Pointer returned. Step 5 complete
 
@@ -95,23 +120,59 @@ PGMImage * new_pgmimage( unsigned int w, unsigned int h, unsigned int m )
     //int *my2DArray = malloc(w * h * sizeof(unsigned int));
                      //allocate w * h * 4 bytes (because of int) of memory
 
-    myNewImage->pixmap = malloc(w * h * sizeof(unsigned int));  //pixmap allocated. Step 4 complete
+    myNewImage->pixmap = malloc(h * sizeof(int *)); //allocate for pixmap rows first
+    for(int i = 0; i < h; i++){
+        myNewImage->pixmap[i] = malloc(w * sizeof(unsigned int));  //pixmap columns allocated for each row. Step 4 complete
 
+    }
+    
     return(myNewImage); //Pointer returned. Step 5 complete
 }
 
 void del_ppmimage( PPMImage * p )
 {
     //free the multi-dimensional arrays
+
+    for(int i = 0; i <= 2; i++){
+        free(p->pixmap[i]);
+        for(int j = 0; j < p->height; j++){
+            free(p->pixmap[i][j]);
+        }
+    }
+
+    free(p->max);
+    free(p->width);
+    free(p->height);
+    free(p);
+
+
 }
 
-void del_pgmimage( PGMImage * p )
+void del_pgmimage(PGMImage * p )
 {
+    //free everything on the left side
+
+    for (int i = 0; i < p->height; i++){
+       free(p->pixmap[i]);
+    }
+    free(p->pixmap);
+    free(p->max);
+    free(p->width);
+    free(p->height);
+    free(p);
+
+
+
 }
 
 void del_pbmimage( PBMImage * p )
 {
-    //free(p);
-    //add more stuff here
+    for (int i = 0; i < p->height; i++){
+       free(p->pixmap[i]);
+    }
+    free(p->pixmap);
+    free(p->width);
+    free(p->height);
+    free(p);
 }
 
