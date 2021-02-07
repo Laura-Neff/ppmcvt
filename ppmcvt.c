@@ -131,6 +131,7 @@ int main( int argc, char *argv[] )
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
                 exit(1);
             }
+            capture.transformationValue = optarg;
             printf("Option r, removing the specified RGB channel. Arg = %s\n", optarg);
             break;
 
@@ -333,6 +334,36 @@ int main( int argc, char *argv[] )
         }
     }
 
+    write_ppmfile(outputPPM, capture.outputFile);
+    exit(0);
+    break;
+
+    case 'r':
+    outputPPM = new_ppmimage(inputPPM->width, inputPPM->height, inputPPM->max);
+    if(strcmp(capture.transformationValue, "red") == 0){
+        tmp = 0;
+    }
+    else if(strcmp(capture.transformationValue, "green") == 0){
+        tmp = 1;
+    }
+    else {
+        tmp = 2;
+    }
+     for(int i = 0; i < outputPPM->height; i++){
+        //ppm->pixmap[0][h][w] red
+        //ppm->pixmap[1][h][w] green
+        //ppm->pixmap[2][h][w] blue
+            for(int j = 0; j < outputPPM->width; j++) {
+              for(int k = 0; k < 3; k++){
+                  if(k != tmp) {
+                      outputPPM->pixmap[k][i][j] = inputPPM->pixmap[k][i][j];
+                 }
+                 else {
+                     outputPPM->pixmap[k][i][j] = 0;
+                 }
+            }
+        }
+    }
     write_ppmfile(outputPPM, capture.outputFile);
     exit(0);
     break;
