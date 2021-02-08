@@ -1,3 +1,6 @@
+// THIS CODE IS MY OWN WORK, IT WAS WRITTEN WITHOUT CONSULTING
+// A TUTOR OR CODE WRITTEN BY OTHER STUDENTS - LAURA NEFF
+
 #include "pbm.h"
 #include <stdio.h> //error library
 #include <stdlib.h>

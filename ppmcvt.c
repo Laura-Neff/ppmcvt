@@ -1,3 +1,6 @@
+// THIS CODE IS MY OWN WORK, IT WAS WRITTEN WITHOUT CONSULTING
+// A TUTOR OR CODE WRITTEN BY OTHER STUDENTS - LAURA NEFF
+
 #include <stdio.h> //error library
 #include <string.h> //for string compare
 #include <stdlib.h> //for free, malloc, and NULL
@@ -415,7 +418,7 @@ int main( int argc, char *argv[] )
 
     case 't':
         tmp = strtol(capture.transformationValue, NULL, 10);
-        outputPPM = new_ppmimage((1/tmp)*inputPPM->width, (1/tmp)*inputPPM->height, inputPPM->max);
+        outputPPM = new_ppmimage((int) ((1/tmp)*inputPPM->width), (int) ((1/tmp)*inputPPM->height), inputPPM->max);
         for(int i = 0; i < outputPPM->height; i++){
             //ppm->pixmap[0][h][w] red
             //ppm->pixmap[1][h][w] green
