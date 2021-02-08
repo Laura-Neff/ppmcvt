@@ -42,17 +42,15 @@ int main( int argc, char *argv[] )
     int option;
     //char *endPointer;
     long target;
-    char *outputFile = NULL;
-    int transformed = 0;
 
     options capture;
     capture.transformation = 0;
     capture.transformationValue = NULL;
     capture.outputFile = NULL;
 
-    for (int i = 0; i < argc; i++){
-        printf("Argument[%d]: %s\n", i, argv[i]);
-    }
+    //for (int i = 0; i < argc; i++){
+     //   printf("Argument[%d]: %s\n", i, argv[i]);
+    //}
 
     while((option = getopt(argc, argv, "bg:i:r:smt:n:o:]")) != -1) {
         switch(option) {
@@ -70,7 +68,7 @@ int main( int argc, char *argv[] )
             //printf("%s\n", capture.transformationValue);
             printf("%c\n", capture.transformation);
 
-            printf("Option b, converting to PBM.\n");
+            //printf("Option b, converting to PBM.\n");
             break;
 
             case 'g':
@@ -84,14 +82,14 @@ int main( int argc, char *argv[] )
 
             capture.transformation = 'g';
             capture.transformationValue = optarg;
-            printf("%s\n", capture.transformationValue);
-            printf("%c\n", capture.transformation);
+            //printf("%s\n", capture.transformationValue);
+            //printf("%c\n", capture.transformation);
 
             if(target > 65536){
                 fprintf(stderr, "Error: Invalid max grayscale pixel value: %s; must be less than 65,536\n", optarg);
                 exit(1);
             }
-            printf("Option g, converting to a PGM. Arg = %s\n", optarg);
+            //printf("Option g, converting to a PGM. Arg = %s\n", optarg);
             break;
 
             case 'i':
@@ -104,7 +102,7 @@ int main( int argc, char *argv[] )
             }
 
             capture.transformation = 'i';
-            printf("%c\n", capture.transformation);
+            //printf("%c\n", capture.transformation);
             //printf("optarg: %s\n",optarg);
             //printf("strcmp optarg: %d\n",strcmp(optarg,"red"));
             if(strcmp(optarg, "red") != 0 && strcmp(optarg, "green") != 0 && strcmp(optarg, "blue") != 0 ) {
@@ -112,7 +110,7 @@ int main( int argc, char *argv[] )
                 exit(1);
             }
             capture.transformationValue = optarg;
-            printf("Option i, isolating the RGB channel. Arg = %s\n", optarg);
+            //printf("Option i, isolating the RGB channel. Arg = %s\n", optarg);
             break;
 
             case 'r':
@@ -125,14 +123,14 @@ int main( int argc, char *argv[] )
             }
 
             capture.transformation = 'r';
-            printf("%c\n", capture.transformation);
+            //printf("%c\n", capture.transformation);
 
             if(strcmp(optarg, "red") != 0 && strcmp(optarg, "green") != 0 && strcmp(optarg, "blue") != 0 ) {
                 fprintf(stderr, "Error: Invalid channel specification: (%s); should be 'red', 'green' or 'blue'\n", optarg);
                 exit(1);
             }
             capture.transformationValue = optarg;
-            printf("Option r, removing the specified RGB channel. Arg = %s\n", optarg);
+            //printf("Option r, removing the specified RGB channel. Arg = %s\n", optarg);
             break;
 
             case 's':
@@ -143,9 +141,9 @@ int main( int argc, char *argv[] )
             }
 
             capture.transformation = 's';
-            printf("%c\n", capture.transformation);
+            //printf("%c\n", capture.transformation);
 
-            printf("Option s, applying sepia transformation.\n");
+            //printf("Option s, applying sepia transformation.\n");
             break;
 
             case 'm':
@@ -156,9 +154,9 @@ int main( int argc, char *argv[] )
             }
 
             capture.transformation = 'm';
-            printf("%c\n", capture.transformation);
+            //printf("%c\n", capture.transformation);
 
-            printf("Option m, vertically mirroring the first half of the image to the second half.\n");
+            //printf("Option m, vertically mirroring the first half of the image to the second half.\n");
             break;
 
             case 't':
@@ -170,8 +168,8 @@ int main( int argc, char *argv[] )
 
             capture.transformation = 't';
             capture.transformationValue = optarg;
-            printf("%s\n", capture.transformationValue);
-            printf("%c\n", capture.transformation);
+            //printf("%s\n", capture.transformationValue);
+            //printf("%c\n", capture.transformation);
 
             target = strtol(optarg, NULL, 10);
             
@@ -195,7 +193,7 @@ int main( int argc, char *argv[] )
                 
                 exit(1);
             }
-            printf("Option t, reducing input image to thumbnail based on scaling factor [1-8]. Arg = %s\n", optarg);
+            //printf("Option t, reducing input image to thumbnail based on scaling factor [1-8]. Arg = %s\n", optarg);
             break;
 
             case 'n':
@@ -207,21 +205,21 @@ int main( int argc, char *argv[] )
 
             capture.transformation = 'n';
             capture.transformationValue = optarg;
-            printf("%s\n", capture.transformationValue);
-            printf("%c\n", capture.transformation);
+            //printf("%s\n", capture.transformationValue);
+            //printf("%c\n", capture.transformation);
 
             target = strtol(optarg, NULL, 10);
             if(target > 8 || target < 1){
                 fprintf(stderr, "Error: Invalid scale factor: %d; must be 1-8\n", (int) target); 
                 exit(1);
             }
-            printf("Option n, tiling thumbnails of input image based on scaling factor [1-8] Arg = %s\n", optarg);
+            //printf("Option n, tiling thumbnails of input image based on scaling factor [1-8] Arg = %s\n", optarg);
             break;
 
             case 'o':
             capture.outputFile = optarg;
             //outputFile = optarg;
-            printf("Option o, writing output image to specified file. The output file is %s\n", capture.outputFile);
+            //printf("Option o, writing output image to specified file. The output file is %s\n", capture.outputFile);
             break;
 
             //Add situation for multiple transformations somewhere
@@ -254,11 +252,11 @@ int main( int argc, char *argv[] )
     }
 
     PPMImage *inputPPM = read_ppmfile(capture.inputFile); //Keep this
-    printf("The file was read in successfully.\n");
-    printf("Pixel at (2,2): %d, %d, %d (RGB).\n",
-                inputPPM->pixmap[0][1][1],
-                inputPPM->pixmap[1][1][1],
-                inputPPM->pixmap[2][1][1]);
+    //printf("The file was read in successfully.\n");
+    //printf("Pixel at (2,2): %d, %d, %d (RGB).\n",
+    //            inputPPM->pixmap[0][1][1],
+    //            inputPPM->pixmap[1][1][1],
+    //            inputPPM->pixmap[2][1][1]);
 
     PBMImage * outputPBM;
     PGMImage * outputPGM;
